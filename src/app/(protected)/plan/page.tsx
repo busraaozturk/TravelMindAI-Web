@@ -88,7 +88,7 @@ export default function PlanPage() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
         <div className="relative">
-          <div className="w-20 h-20 rounded-full border-4 animate-spin" style={{ borderColor: "var(--border)", borderTopColor: "var(--primary)" }} />
+          <div className="w-20 h-20 rounded-full border-4 border-slate-200 border-t-red-500 animate-spin" />
           <Plane size={28} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ color: "var(--text)" }} />
         </div>
         <div className="text-center">

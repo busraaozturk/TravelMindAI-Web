@@ -118,7 +118,7 @@ export default function CurrencyPage() {
         </div>
 
         {/* Result */}
-        <div className="rounded-2xl p-6 text-white text-center" style={{ background: "linear-gradient(145deg, #C96C4A, #B05A3A)" }}>
+        <div className="rounded-2xl p-6 text-white text-center" style={{ background: "linear-gradient(135deg, #0f3460, #16213e)" }}>
           {loading ? (
             <div className="flex items-center justify-center gap-2 text-blue-200">
               <RefreshCw size={16} className="animate-spin" />

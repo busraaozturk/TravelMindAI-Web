@@ -44,7 +44,7 @@ export default function Navbar({ userEmail }: { userEmail?: string }) {
                 href={href}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 style={pathname === href
-                  ? { background: "var(--primary-soft)", color: "var(--primary)" }
+                  ? { background: "var(--primary)", color: "white" }
                   : { color: "var(--text-light)" }}
               >
                 <Icon size={16} />
@@ -85,7 +85,7 @@ export default function Navbar({ userEmail }: { userEmail?: string }) {
             <Link key={href} href={href} onClick={() => setMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors"
               style={pathname === href
-                ? { background: "var(--primary-soft)", color: "var(--primary)" }
+                ? { background: "var(--primary)", color: "white" }
                 : { color: "var(--text-light)" }}>
               <Icon size={16} />
               {label}

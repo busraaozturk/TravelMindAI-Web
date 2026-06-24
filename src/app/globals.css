@@ -1,32 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  /* Ana renkler */
-  --primary:        #C96C4A;
-  --primary-dark:   #B05A3A;
-  --primary-soft:   #F6E3DA;
+  --primary:      #0f3460;
+  --primary-dark: #16213e;
+  --primary-soft: #eef2f7;
 
-  --secondary:      #E8B27D;
-  --secondary-soft: #FBEEDD;
+  --secondary:      #e94560;
+  --secondary-soft: #fdf2f4;
 
-  --success:        #5E9C76;
-  --info:           #6B8CAE;
+  --success: #10b981;
+  --info:    #6366f1;
 
-  /* Arka plan & yüzey */
-  --bg:     #FFF8F2;
-  --card:   #FFFFFF;
-  --border: #F1E4D8;
+  --bg:     #f8f9fa;
+  --card:   #ffffff;
+  --border: #e2e8f0;
 
-  /* Metin */
-  --text:       #2D3748;
-  --text-light: #718096;
+  --text:       #1a1a2e;
+  --text-light: #64748b;
 
-  /* Bütçe grafik renkleri */
-  --chart-accommodation: #C96C4A;
-  --chart-food:          #E8B27D;
-  --chart-transport:     #6B8CAE;
-  --chart-activities:    #5E9C76;
-  --chart-emergency:     #CBB8A6;
+  --chart-accommodation: #0f3460;
+  --chart-food:          #f59e0b;
+  --chart-transport:     #6366f1;
+  --chart-activities:    #10b981;
+  --chart-emergency:     #94a3b8;
 }
 
 @theme inline {
@@ -50,14 +46,14 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Auth sayfaları gradient arka planı */
 .gradient-bg {
-  background: linear-gradient(145deg, #C96C4A 0%, #B05A3A 40%, #8B3A22 100%);
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
 }
 
 /* Kart */
 .card {
   background: var(--card);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(201, 108, 74, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--border);
 }
 
@@ -69,7 +65,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Butonlar */
 .btn-primary {
-  background: var(--primary);
+  background: linear-gradient(135deg, #e94560, #c73652);
   color: white;
   border: none;
   border-radius: 10px;
@@ -85,9 +81,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
-  background: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(201, 108, 74, 0.30);
+  box-shadow: 0 8px 24px rgba(233, 69, 96, 0.35);
 }
 
 .btn-primary:disabled {
@@ -131,7 +126,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .input-field:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(201, 108, 74, 0.12);
+  box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
 }
 
 /* Step dots */
