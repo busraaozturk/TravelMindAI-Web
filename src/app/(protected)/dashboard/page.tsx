@@ -29,7 +29,9 @@ export default async function DashboardPage() {
           Yapay zeka ile kişiselleştirilmiş seyahat planın dakikalar içinde hazır.
           Hedefini söyle, gerisini biz halledelim.
         </p>
-        <Link href="/plan" className="btn-primary inline-flex text-base py-3 px-6">
+        <Link href="/plan" className="inline-flex items-center gap-2 text-base font-semibold py-3 px-6 transition-all"
+          style={{ background: "#FFFFFF", color: "#C96C4A", fontFamily: "var(--font-dm-sans)", borderRadius: "12px", boxShadow: "0 2px 12px rgba(0,0,0,0.12)" }}
+        >
           <Plus size={20} />
           Yeni Seyahat Planla
         </Link>
