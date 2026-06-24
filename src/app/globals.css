@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --primary:      #0f3460;
-  --primary-dark: #16213e;
-  --primary-soft: #eef2f7;
+  --primary:      #C96C4A;
+  --primary-dark: #B05A3A;
+  --primary-soft: #F6E3DA;
 
-  --secondary:      #e94560;
-  --secondary-soft: #fdf2f4;
+  --secondary:      #E8B27D;
+  --secondary-soft: #FBEEDD;
 
-  --success: #10b981;
-  --info:    #6366f1;
+  --success: #5E9C76;
+  --info:    #6B8CAE;
 
-  --bg:     #f8f9fa;
-  --card:   #ffffff;
-  --border: #e2e8f0;
+  --bg:     #FFF8F2;
+  --card:   #FFFFFF;
+  --border: #F1E4D8;
 
-  --text:       #1a1a2e;
-  --text-light: #64748b;
+  --text:       #2D3748;
+  --text-light: #718096;
 
-  --chart-accommodation: #0f3460;
-  --chart-food:          #f59e0b;
-  --chart-transport:     #6366f1;
-  --chart-activities:    #10b981;
-  --chart-emergency:     #94a3b8;
+  --chart-accommodation: #C96C4A;
+  --chart-food:          #E8B27D;
+  --chart-transport:     #6B8CAE;
+  --chart-activities:    #5E9C76;
+  --chart-emergency:     #CBB8A6;
 }
 
 @theme inline {
@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Auth sayfaları gradient arka planı */
 .gradient-bg {
-  background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+  background: linear-gradient(135deg, #C96C4A 0%, #B05A3A 50%, #8B3E25 100%);
 }
 
 /* Kart */
@@ -65,7 +65,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Butonlar */
 .btn-primary {
-  background: linear-gradient(135deg, #e94560, #c73652);
+  background: linear-gradient(135deg, #C96C4A, #B05A3A);
   color: white;
   border: none;
   border-radius: 10px;
@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(233, 69, 96, 0.35);
+  box-shadow: 0 8px 24px rgba(201, 108, 74, 0.35);
 }
 
 .btn-primary:disabled {
@@ -126,7 +126,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .input-field:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
+  box-shadow: 0 0 0 3px rgba(201, 108, 74, 0.12);
 }
 
 /* Step dots */

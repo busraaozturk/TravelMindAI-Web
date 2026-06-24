@@ -77,7 +77,7 @@ export default function RegisterPage() {
             <Plane className="text-white" size={32} />
           </div>
           <h1 className="text-3xl font-bold text-white" style={{ fontFamily: "var(--font-dm-sans)" }}>TravelMind AI</h1>
-          <p className="text-blue-200 mt-1">Yapay zeka destekli seyahat planlayıcı</p>
+          <p className="text-orange-100 mt-1">Yapay zeka destekli seyahat planlayıcı</p>
         </div>
 
         <div className="card p-8">

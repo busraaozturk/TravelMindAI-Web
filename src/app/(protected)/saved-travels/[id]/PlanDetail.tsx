@@ -5,12 +5,12 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recha
 import { Umbrella, Sun, Hotel, Package, MapPin, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 
 const ACTIVITY_COLORS: Record<string, string> = {
-  culture: "#6366f1",
-  food: "#f59e0b",
-  nature: "#10b981",
-  shopping: "#ec4899",
-  transport: "#64748b",
-  accommodation: "#0f3460",
+  culture: "#6B8CAE",
+  food: "#E8B27D",
+  nature: "#5E9C76",
+  shopping: "#C96C4A",
+  transport: "#CBB8A6",
+  accommodation: "#B05A3A",
 };
 
 const ACTIVITY_ICONS: Record<string, string> = {
@@ -22,7 +22,7 @@ const ACTIVITY_ICONS: Record<string, string> = {
   accommodation: "🏨",
 };
 
-const BUDGET_COLORS = ["#0f3460", "#e94560", "#10b981", "#f59e0b", "#6366f1", "#64748b"];
+const BUDGET_COLORS = ["#C96C4A", "#E8B27D", "#5E9C76", "#6B8CAE", "#CBB8A6", "#B05A3A"];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function PlanDetail({ plan }: { plan: any }) {

@@ -118,25 +118,25 @@ export default function CurrencyPage() {
         </div>
 
         {/* Result */}
-        <div className="rounded-2xl p-6 text-white text-center" style={{ background: "linear-gradient(135deg, #0f3460, #16213e)" }}>
+        <div className="rounded-2xl p-6 text-white text-center" style={{ background: "linear-gradient(135deg, #C96C4A, #B05A3A)" }}>
           {loading ? (
-            <div className="flex items-center justify-center gap-2 text-blue-200">
+            <div className="flex items-center justify-center gap-2 text-orange-100">
               <RefreshCw size={16} className="animate-spin" />
               Kur bilgisi alınıyor...
             </div>
           ) : result ? (
             <>
-              <div className="text-sm text-blue-200 mb-1">{Number(amount).toLocaleString("tr-TR")} {from} =</div>
+              <div className="text-sm text-orange-100 mb-1">{Number(amount).toLocaleString("tr-TR")} {from} =</div>
               <div className="text-4xl font-bold">{Number(result).toLocaleString("tr-TR")}</div>
-              <div className="text-xl mt-1 text-blue-200">{to}</div>
+              <div className="text-xl mt-1 text-orange-100">{to}</div>
               {reverseRate && (
-                <div className="text-xs text-blue-300 mt-3">
+                <div className="text-xs text-orange-200 mt-3">
                   1 {to} = {reverseRate} {from}
                 </div>
               )}
             </>
           ) : (
-            <div className="text-blue-200">Kur bilgisi yüklenemedi</div>
+            <div className="text-orange-100">Kur bilgisi yüklenemedi</div>
           )}
         </div>
 
