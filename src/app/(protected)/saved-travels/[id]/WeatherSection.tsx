@@ -16,9 +16,10 @@ function weatherIcon(code: number): string {
   return WMO_ICON[code] ?? "🌤️";
 }
 
+const DAYS_SHORT = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
 function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("tr-TR", { weekday: "short", day: "numeric", month: "numeric" });
+  const d = new Date(dateStr + "T12:00:00");
+  return `${DAYS_SHORT[d.getDay()]} ${d.getDate()}.${d.getMonth() + 1}`;
 }
 
 interface WeatherData {
@@ -42,6 +43,11 @@ interface Props {
   rainyDayAlternatives?: RainyAlternative[];
 }
 
+const MOCK_TEMPS_MAX = [28, 26, 29, 27, 30, 25, 28];
+const MOCK_TEMPS_MIN = [18, 17, 20, 19, 21, 16, 18];
+const MOCK_RAIN     = [5,  10, 0,  15, 5,  20, 0];
+const MOCK_CODES    = [1,  2,  0,  1,  0,  2,  1];
+
 function buildMockWeather(startDate: string, days: number): WeatherData {
   return {
     time: Array.from({ length: days }, (_, i) => {
@@ -49,10 +55,10 @@ function buildMockWeather(startDate: string, days: number): WeatherData {
       d.setDate(d.getDate() + i);
       return d.toISOString().split("T")[0];
     }),
-    temperature_2m_max: Array.from({ length: days }, () => 24 + Math.round(Math.random() * 8)),
-    temperature_2m_min: Array.from({ length: days }, () => 16 + Math.round(Math.random() * 6)),
-    precipitation_probability_max: Array.from({ length: days }, () => Math.round(Math.random() * 20)),
-    weathercode: Array.from({ length: days }, () => [0, 1, 2, 1, 0][Math.floor(Math.random() * 5)]),
+    temperature_2m_max:           Array.from({ length: days }, (_, i) => MOCK_TEMPS_MAX[i % MOCK_TEMPS_MAX.length]),
+    temperature_2m_min:           Array.from({ length: days }, (_, i) => MOCK_TEMPS_MIN[i % MOCK_TEMPS_MIN.length]),
+    precipitation_probability_max: Array.from({ length: days }, (_, i) => MOCK_RAIN[i % MOCK_RAIN.length]),
+    weathercode:                  Array.from({ length: days }, (_, i) => MOCK_CODES[i % MOCK_CODES.length]),
   };
 }
 

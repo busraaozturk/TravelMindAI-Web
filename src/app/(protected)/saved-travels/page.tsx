@@ -74,10 +74,8 @@ export default async function SavedTravelsPage() {
 
           {/* New plan card */}
           <Link href="/plan"
-            className="card p-5 flex flex-col items-center justify-center gap-3 min-h-[160px] transition-colors"
-            style={{ border: "2px dashed var(--border)", color: "var(--text-light)" }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--primary)"; (e.currentTarget as HTMLElement).style.color = "var(--primary)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; (e.currentTarget as HTMLElement).style.color = "var(--text-light)"; }}>
+            className="card p-5 flex flex-col items-center justify-center gap-3 min-h-[160px] transition-colors hover-plan-card"
+            style={{ border: "2px dashed var(--border)", color: "var(--text-light)" }}>
             <div className="w-12 h-12 rounded-full border-2 border-current flex items-center justify-center">
               <Plus size={22} />
             </div>

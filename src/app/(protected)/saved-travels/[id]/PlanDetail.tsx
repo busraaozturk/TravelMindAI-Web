@@ -1,140 +1,228 @@
 "use client";
 
 import { useState } from "react";
-import { Umbrella, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { Umbrella, MapPin, Coins, Clock, Footprints, Bus, Car, CalendarDays, Utensils, Star } from "lucide-react";
 import LocalTips from "./LocalTips";
 import HiddenGems from "./HiddenGems";
 import Viewpoints from "./Viewpoints";
 import LocalSpots from "./LocalSpots";
-import HotelRecommendations from "./HotelRecommendations";
 import BudgetBreakdown from "./BudgetBreakdown";
 
-const ACTIVITY_COLORS: Record<string, string> = {
-  culture: "#6B8CAE",
-  food: "#E8B27D",
-  nature: "#5E9C76",
-  shopping: "#C96C4A",
-  transport: "#CBB8A6",
+const TYPE_LABELS: Record<string, string> = {
+  culture:       "TARİH",
+  food:          "YEMEK",
+  nature:        "DOĞA",
+  shopping:      "ALIŞVERİŞ",
+  transport:     "ULAŞIM",
+  accommodation: "KONAKLAMA",
+};
+
+const TYPE_COLORS: Record<string, string> = {
+  culture:       "#6B8CAE",
+  food:          "#C96C4A",
+  nature:        "#5E9C76",
+  shopping:      "#E8B27D",
+  transport:     "#CBB8A6",
   accommodation: "#B05A3A",
 };
 
-const ACTIVITY_ICONS: Record<string, string> = {
-  culture: "🏛️",
-  food: "🍽️",
-  nature: "🌿",
-  shopping: "🛍️",
-  transport: "🚌",
-  accommodation: "🏨",
+const DAY_THEMES: Record<number, { label: string; emoji: string }> = {
+  1: { label: "Tarih Rotası",       emoji: "🧭" },
+  2: { label: "Keşif & Lezzet",     emoji: "🍽️" },
+  3: { label: "Doğa & Manzara",     emoji: "🌿" },
+  4: { label: "Kültür & Sanat",     emoji: "🎨" },
+  5: { label: "Gizli Köşeler",      emoji: "🗝️" },
+  6: { label: "Alışveriş & Eğlence",emoji: "🛍️" },
+  7: { label: "Son Gün & Veda",     emoji: "🌅" },
 };
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function PlanDetail({ plan }: { plan: any }) {
   const [activeDay, setActiveDay] = useState(0);
-  const [expandedActivity, setExpandedActivity] = useState<number | null>(null);
 
   const planData = plan.plan_data;
-  if (!planData) return <div className="card p-8 text-center text-slate-500">Plan verisi bulunamadı.</div>;
+  if (!planData) return (
+    <div className="card p-10 text-center" style={{ color: "var(--text-light)" }}>
+      Plan verisi bulunamadı.
+    </div>
+  );
 
   const days = planData.days ?? [];
   const currentDay = days[activeDay];
   const budgetBreakdown = planData.budgetBreakdown ?? {};
-
+  const theme = DAY_THEMES[currentDay?.day] ?? { label: currentDay?.weather ?? "", emoji: "☀️" };
 
   return (
-    <div className="space-y-6">
-      {/* Day tabs */}
-      <div className="card p-2 overflow-x-auto">
-        <div className="flex gap-1 min-w-max">
+    <div className="space-y-5">
+
+      {/* ── Gün seçici kart ── */}
+      <div className="card px-5 py-4">
+        <div className="flex items-center gap-2 mb-3">
+          <CalendarDays size={15} style={{ color: "var(--primary)" }} />
+          <span className="text-sm font-bold" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
+            Günlük Rota
+          </span>
+        </div>
+        <div className="flex gap-2 flex-wrap">
           {days.map((day: any, i: number) => (
-            <button key={i} onClick={() => setActiveDay(i)}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all"
+            <button
+              key={i}
+              onClick={() => setActiveDay(i)}
+              className="px-4 py-1.5 text-sm font-semibold transition-all"
               style={i === activeDay
-                ? { background: "var(--primary)", color: "white" }
-                : { color: "var(--text-light)" }}>
-              <span className="mr-1">{day.isRainy ? "🌧️" : "☀️"}</span>
-              Gün {day.day}
-              {day.date && <span className="hidden sm:inline text-xs opacity-75 ml-1">
-                {new Date(day.date).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}
-              </span>}
+                ? { background: "var(--primary)", color: "white", borderRadius: "999px", border: "2px solid var(--primary)" }
+                : { background: "transparent", color: "var(--text-light)", borderRadius: "999px", border: "2px solid var(--border)" }
+              }
+            >
+              {i + 1}. Gün
             </button>
           ))}
         </div>
       </div>
 
-      {/* Current day */}
       {currentDay && (
         <div className="grid lg:grid-cols-3 gap-6">
+
+          {/* ── Sol: Aktiviteler ── */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="font-bold text-lg" style={{ color: "var(--text)" }}>
-                {currentDay.isRainy ? "🌧️" : "☀️"} Gün {currentDay.day} — {currentDay.weather}
+
+            {/* Gün başlığı */}
+            <div className="mb-1">
+              <h2 className="text-base font-bold" style={{ color: "var(--primary)", fontFamily: "var(--font-dm-sans)" }}>
+                {currentDay.day}. Gün — {theme.label} {theme.emoji}
               </h2>
+              <p className="text-xs mt-0.5" style={{ color: "var(--text-light)" }}>
+                Karma ağırlıklı · coğrafi yakınlığa göre optimize edilmiş rota
+              </p>
             </div>
 
+            {/* Yağmurlu uyarı */}
             {currentDay.isRainy && currentDay.planB && (
-              <div className="rounded-xl p-4 text-sm" style={{ background: "var(--secondary-soft)", border: "1px solid var(--border)" }}>
-                <div className="flex items-center gap-2 font-semibold mb-1" style={{ color: "var(--info)" }}>
-                  <Umbrella size={15} />
-                  Plan B — Yağmurlu Gün Alternatifi
+              <div className="rounded-2xl p-4" style={{ background: "var(--secondary-soft)", border: "1px solid var(--border)" }}>
+                <div className="flex items-center gap-2 text-sm font-semibold mb-1" style={{ color: "var(--info)" }}>
+                  <Umbrella size={14} /> Plan B — Yağmurlu Gün Alternatifi
                 </div>
-                <p style={{ color: "var(--text-light)" }}>{currentDay.planB}</p>
+                <p className="text-sm" style={{ color: "var(--text-light)" }}>{currentDay.planB}</p>
               </div>
             )}
 
-            <div className="space-y-3">
-              {(currentDay.activities ?? []).map((activity: any, i: number) => (
-                <div key={i} className="card overflow-hidden">
-                  <button className="w-full text-left p-4 flex items-start gap-4"
-                    onClick={() => setExpandedActivity(expandedActivity === i ? null : i)}>
-                    <div className="text-2xl flex-shrink-0 mt-0.5">{ACTIVITY_ICONS[activity.type] ?? "📌"}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <div>
-                          <span className="text-xs font-semibold text-slate-400 mr-2">{activity.time}</span>
-                          <span className="font-semibold text-sm sm:text-base">{activity.name}</span>
+            {/* Aktivite listesi */}
+            {(currentDay.activities ?? []).map((act: any, i: number) => {
+              const color = TYPE_COLORS[act.type] ?? "#CBD5E0";
+              const label = TYPE_LABELS[act.type] ?? (act.type ?? "").toUpperCase();
+              const t = act.transitToNext;
+              const walking = t?.walking ?? { time: "10–20 dk", distance: "~1 km" };
+              const transit = t?.transit ?? { time: "~10 dk" };
+              const taxi    = t?.taxi    ?? { time: "~5 dk", cost: null };
+              const isLast  = i === (currentDay.activities?.length ?? 0) - 1;
+
+              return (
+                <div key={i}>
+                  {/* Aktivite kartı */}
+                  <div className="card overflow-hidden" style={{ borderRadius: "14px" }}>
+                    <div className="p-4 space-y-2.5">
+
+                      {/* Saat + İsim + Kategori */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                          <span className="text-sm font-bold leading-6 flex-shrink-0" style={{ color: "var(--primary)" }}>
+                            {act.time}
+                          </span>
+                          <span className="text-sm font-bold leading-6" style={{ color: "var(--text)" }}>
+                            {act.name}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          {activity.estimatedCost > 0 && (
-                            <span className="text-sm font-semibold" style={{ color: "var(--primary)" }}>
-                              ₺{activity.estimatedCost?.toLocaleString("tr-TR")}
-                            </span>
-                          )}
-                          {expandedActivity === i ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs text-slate-400">{activity.duration}</span>
-                        <span className="tag text-xs" style={{
-                          background: `${ACTIVITY_COLORS[activity.type] ?? "#e2e8f0"}18`,
-                          color: ACTIVITY_COLORS[activity.type] ?? "#64748b"
-                        }}>
-                          {activity.type}
+                        <span
+                          className="text-xs font-bold px-3 py-1 rounded-full flex-shrink-0 leading-none"
+                          style={{ border: `1.5px solid ${color}`, color, background: `${color}10` }}
+                        >
+                          {label}
                         </span>
                       </div>
-                    </div>
-                  </button>
-                  {expandedActivity === i && (
-                    <div className="px-4 pb-4 border-t border-slate-100 pt-3 space-y-2 fade-in-up">
-                      <p className="text-sm text-slate-600">{activity.description}</p>
-                      {activity.why && (
-                        <div className="rounded-lg p-3 text-sm" style={{ background: "var(--secondary-soft)" }}>
-                          <div className="flex items-start gap-2">
-                            <Lightbulb size={14} className="mt-0.5 flex-shrink-0" style={{ color: "var(--secondary)" }} />
-                            <span style={{ color: "var(--text-light)" }}>{activity.why}</span>
+
+                      {/* Açıklama */}
+                      {act.description && (
+                        <p className="text-sm" style={{ color: "var(--text-light)", lineHeight: 1.5 }}>
+                          {act.description}
+                        </p>
+                      )}
+
+                      {/* Neden önerildi */}
+                      {act.why && (
+                        <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--primary-soft)" }}>
+                          <div className="flex items-start gap-1.5">
+                            <MapPin size={12} className="mt-0.5 flex-shrink-0" style={{ color: "var(--primary)" }} />
+                            <p className="text-xs leading-relaxed" style={{ color: "var(--text)" }}>
+                              <span className="font-bold" style={{ color: "var(--primary)" }}>Neden önerildi: </span>
+                              {act.why}
+                            </p>
                           </div>
                         </div>
                       )}
+
+                      {/* Etiketler */}
+                      <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                        {act.estimatedCost > 0 && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            style={{ border: "1.5px solid var(--border)", color: "var(--text)", background: "white" }}>
+                            <Coins size={10} style={{ color: "var(--primary)" }} />
+                            ₺{act.estimatedCost.toLocaleString("tr-TR")}
+                          </span>
+                        )}
+                        {act.cuisine && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            style={{ border: "1.5px solid var(--border)", color: "var(--text)", background: "white" }}>
+                            <Utensils size={10} style={{ color: "var(--primary)" }} />
+                            {act.cuisine}
+                          </span>
+                        )}
+                        {act.duration && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            style={{ border: "1.5px solid var(--border)", color: "var(--text)", background: "white" }}>
+                            <Clock size={10} style={{ color: "var(--primary)" }} />
+                            {act.duration}
+                          </span>
+                        )}
+                        {act.rating && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            style={{ border: "1.5px solid var(--border)", color: "var(--text)", background: "white" }}>
+                            <Star size={10} style={{ color: "#F59E0B", fill: "#F59E0B" }} />
+                            {act.rating}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SONRAKİ DURAĞA */}
+                  {!isLast && (
+                    <div className="mx-3 my-3 px-4 py-2 rounded-xl flex items-center gap-3 text-xs flex-wrap"
+                      style={{ border: "1.5px dashed var(--border)", background: "var(--bg)" }}>
+                      <span className="font-bold tracking-wide uppercase" style={{ color: "var(--text-light)", fontSize: 10 }}>
+                        Sonraki Durağa
+                      </span>
+                      <span className="flex items-center gap-1" style={{ color: "var(--text-light)" }}>
+                        <Footprints size={11} />
+                        {walking.time} · {walking.distance}
+                      </span>
+                      <span className="inline-flex items-center gap-1 font-bold px-2 py-0.5 rounded-lg"
+                        style={{ background: "var(--primary-soft)", color: "var(--primary)" }}>
+                        <Bus size={11} />
+                        {transit.time}
+                      </span>
+                      <span className="flex items-center gap-1" style={{ color: "var(--text-light)" }}>
+                        <Car size={11} />
+                        {taxi.time}{taxi.cost ? ` · ₺${taxi.cost.toLocaleString("tr-TR")}` : ""}
+                      </span>
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {/* Sidebar */}
+          {/* ── Sağ: Sidebar ── */}
           <div className="space-y-4">
-            {/* Budget breakdown */}
             {Object.keys(budgetBreakdown).length > 0 && (
               <BudgetBreakdown
                 budgetBreakdown={budgetBreakdown}
@@ -144,31 +232,13 @@ export default function PlanDetail({ plan }: { plan: any }) {
                 durationDays={plan.duration_days}
               />
             )}
-
-            {/* Yerel Tavsiyeler */}
-            {planData.localTips?.length > 0 && (
-              <LocalTips tips={planData.localTips} />
-            )}
-
-            {/* Gizli Kalmış Mekanlar */}
-            {planData.hiddenGems?.length > 0 && (
-              <HiddenGems gems={planData.hiddenGems} />
-            )}
-
-            {/* Manzara Noktaları */}
-            {planData.viewpoints?.length > 0 && (
-              <Viewpoints viewpoints={planData.viewpoints} />
-            )}
-
-            {/* Yerel Halkın Tercih Ettiği Noktalar */}
-            {planData.localSpots?.length > 0 && (
-              <LocalSpots spots={planData.localSpots} />
-            )}
+            {planData.localTips?.length > 0 && <LocalTips tips={planData.localTips} />}
+            {planData.hiddenGems?.length > 0 && <HiddenGems gems={planData.hiddenGems} />}
+            {planData.viewpoints?.length > 0 && <Viewpoints viewpoints={planData.viewpoints} />}
+            {planData.localSpots?.length > 0 && <LocalSpots spots={planData.localSpots} />}
           </div>
         </div>
       )}
-
-
     </div>
   );
 }
