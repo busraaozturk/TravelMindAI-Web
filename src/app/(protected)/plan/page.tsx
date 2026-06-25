@@ -132,6 +132,7 @@ export default function PlanPage() {
   const supabase = createClient();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [form, setForm] = useState({
     destination: "",
     startDate: "",
@@ -208,6 +209,15 @@ export default function PlanPage() {
 
   async function handleSubmit() {
     setLoading(true);
+    setLoadingStep(0);
+
+    // Adım adım loading animasyonu
+    const steps = [0, 1, 2, 3];
+    for (const step of steps) {
+      setLoadingStep(step);
+      await new Promise(r => setTimeout(r, 900));
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     const response = await fetch("/api/generate-plan", {
       method: "POST",
@@ -223,22 +233,46 @@ export default function PlanPage() {
     }
   }
 
+  const loadingSteps = [
+    { icon: "🌍", text: "Destinasyon analiz ediliyor..." },
+    { icon: "🌤️", text: "Hava durumu kontrol ediliyor..." },
+    { icon: "💱", text: "Döviz kurları hesaplanıyor..." },
+    { icon: "🗺️", text: "Saatlik rota oluşturuluyor..." },
+  ];
+
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-8">
+        {/* Uçak animasyonu */}
         <div className="relative">
-          <div className="w-20 h-20 rounded-full border-4 animate-spin" style={{ borderColor: "var(--border)", borderTopColor: "var(--primary)" }} />
-          <Plane size={28} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ color: "var(--primary)" }} />
+          <div className="w-24 h-24 rounded-full border-4 animate-spin" style={{ borderColor: "var(--border)", borderTopColor: "var(--primary)" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "var(--primary-soft)" }}>
+            <Plane size={26} style={{ color: "var(--primary)" }} />
+          </div>
         </div>
+
         <div className="text-center">
-          <h2 className="text-xl font-bold mb-1" style={{ color: "var(--text)" }}>Planın Hazırlanıyor...</h2>
-          <p className="text-slate-500">Yapay zeka {form.destination} için özel rotanı oluşturuyor</p>
+          <h2 className="text-2xl font-bold mb-1" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
+            {form.destination} Planın Hazırlanıyor
+          </h2>
+          <p style={{ color: "var(--text-light)" }}>Kişiselleştirilmiş seyahat planın oluşturuluyor...</p>
         </div>
-        <div className="flex flex-wrap gap-2 justify-center">
-          {["Hava durumu kontrol ediliyor...", "Döviz hesaplanıyor...", "Rota oluşturuluyor..."].map((msg, i) => (
-            <div key={i} className="flex items-center gap-2 bg-white rounded-full px-4 py-2 text-sm shadow-sm" style={{ border: "1px solid var(--border)", color: "var(--text-light)" }}>
-              <Loader2 size={14} className="animate-spin" style={{ color: "var(--primary)" }} />
-              {msg}
+
+        {/* Adım adım ilerleme */}
+        <div className="w-full max-w-sm space-y-3">
+          {loadingSteps.map((s, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+              style={{
+                background: i <= loadingStep ? "var(--primary-soft)" : "var(--card)",
+                border: `1px solid ${i <= loadingStep ? "var(--primary)" : "var(--border)"}`,
+                opacity: i > loadingStep + 1 ? 0.4 : 1,
+              }}>
+              <span className="text-xl">{s.icon}</span>
+              <span className="text-sm font-medium flex-1" style={{ color: i <= loadingStep ? "var(--primary)" : "var(--text-light)" }}>
+                {s.text}
+              </span>
+              {i < loadingStep && <Check size={16} style={{ color: "var(--success)" }} />}
+              {i === loadingStep && <Loader2 size={16} className="animate-spin" style={{ color: "var(--primary)" }} />}
             </div>
           ))}
         </div>
