@@ -24,8 +24,7 @@ export default function LandingPage() {
               <a href="#yorumlar">Yorumlar</a>
             </div>
             <div className="nav-cta">
-              <Link href="/login" className="btn btn-ghost btn-sm">Giriş Yap</Link>
-              <Link href="/register" className="btn btn-primary btn-sm">Seyahatimi Planla</Link>
+              <Link href="/login" className="btn btn-primary btn-sm">Seyahatimi Planla</Link>
               <button className="nav-burger" aria-label="Menüyü aç" onClick={() => setMenuOpen(o => !o)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M4 7h16M4 12h16M4 17h16"/>
@@ -38,8 +37,7 @@ export default function LandingPage() {
             <a href="#ozellikler" onClick={() => setMenuOpen(false)}>Özellikler</a>
             <a href="#ornek" onClick={() => setMenuOpen(false)}>Örnek Plan</a>
             <a href="#yorumlar" onClick={() => setMenuOpen(false)}>Yorumlar</a>
-            <Link href="/login" onClick={() => setMenuOpen(false)}>Giriş Yap</Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)} style={{ color: "var(--primary)", fontWeight: 700 }}>Seyahatimi Planla</Link>
+            <Link href="/login" onClick={() => setMenuOpen(false)} style={{ color: "var(--primary)", fontWeight: 700 }}>Seyahatimi Planla</Link>
           </div>
         </nav>
 

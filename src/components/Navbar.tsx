@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LayoutDashboard, BookMarked, DollarSign, CloudSun, LogOut, Menu, X, Plus } from "lucide-react";
+import { LayoutDashboard, BookMarked, DollarSign, CloudSun, MessageSquare, LogOut, Menu, X, Plus } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard",     label: "Ana Sayfa",          icon: LayoutDashboard },
   { href: "/saved-travels", label: "Kayıtlı Seyahatler", icon: BookMarked },
   { href: "/currency",      label: "Döviz Çevirici",     icon: DollarSign },
   { href: "/weather",       label: "Hava Durumu",         icon: CloudSun },
+  { href: "/feedback",      label: "Topluluk",            icon: MessageSquare },
 ];
 
 export default function Navbar({ userEmail }: { userEmail?: string }) {
