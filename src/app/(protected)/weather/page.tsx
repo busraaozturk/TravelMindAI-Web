@@ -133,20 +133,20 @@ export default function WeatherPage() {
   const curWmo = cur ? wmo(cur.code) : null;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Başlık */}
-      <div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--primary)", fontFamily: "var(--font-dm-sans)" }}>
-          Hava Durumu
-        </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--text-light)" }}>
-          Şehir adı veya konum girerek anlık ve 7 günlük tahvini görün
-        </p>
-      </div>
+    <div className="space-y-5">
+      {/* Başlık + Arama */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold" style={{ color: "var(--primary)", fontFamily: "var(--font-dm-sans)" }}>
+            Hava Durumu
+          </h1>
+          <p className="text-sm mt-0.5" style={{ color: "var(--text-light)" }}>
+            Şehir adı girerek anlık ve 7 günlük tahmini görün
+          </p>
+        </div>
 
-      {/* Arama */}
-      <div className="relative">
-        <div className="relative">
+        {/* Arama */}
+        <div className="relative w-full sm:w-80">
           <Search size={17} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--text-light)" }} />
           <input
             className="input-field pl-11"
@@ -155,23 +155,23 @@ export default function WeatherPage() {
             onChange={(e) => searchCity(e.target.value)}
             autoComplete="off"
           />
+          {suggestions.length > 0 && (
+            <div className="absolute z-50 w-full mt-1 rounded-2xl shadow-lg overflow-hidden"
+              style={{ background: "white", border: "1.5px solid var(--border)" }}>
+              {suggestions.map((g, i) => (
+                <button key={i} onClick={() => selectCity(g)}
+                  className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-orange-50 transition-colors"
+                  style={{ borderBottom: i < suggestions.length - 1 ? "1px solid var(--border)" : "none" }}>
+                  <MapPin size={14} style={{ color: "var(--primary)", flexShrink: 0 }} />
+                  <div>
+                    <span className="font-semibold text-sm" style={{ color: "var(--text)" }}>{g.name}</span>
+                    <span className="text-xs ml-2" style={{ color: "var(--text-light)" }}>{g.admin1 ? `${g.admin1}, ` : ""}{g.country}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-        {suggestions.length > 0 && (
-          <div className="absolute z-50 w-full mt-1 rounded-2xl shadow-lg overflow-hidden"
-            style={{ background: "white", border: "1.5px solid var(--border)" }}>
-            {suggestions.map((g, i) => (
-              <button key={i} onClick={() => selectCity(g)}
-                className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-orange-50 transition-colors"
-                style={{ borderBottom: i < suggestions.length - 1 ? "1px solid var(--border)" : "none" }}>
-                <MapPin size={14} style={{ color: "var(--primary)", flexShrink: 0 }} />
-                <div>
-                  <span className="font-semibold text-sm" style={{ color: "var(--text)" }}>{g.name}</span>
-                  <span className="text-xs ml-2" style={{ color: "var(--text-light)" }}>{g.admin1 ? `${g.admin1}, ` : ""}{g.country}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {loading && (
@@ -186,113 +186,119 @@ export default function WeatherPage() {
       )}
 
       {weather && !loading && (
-        <>
-          {/* Anlık hava — ana kart */}
-          <div className="rounded-2xl p-6 text-white relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)" }}>
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1 opacity-90">
-                  <MapPin size={14} />
-                  <span className="text-sm font-medium">{weather.city}</span>
+        <div className="space-y-4">
+
+          {/* Üst: 2 eşit kolon */}
+          <div className="grid grid-cols-2 gap-5 items-stretch">
+
+            {/* Sol: Anlık hava + Saatlik */}
+            <div className="flex flex-col gap-4">
+              <div className="rounded-2xl p-6 text-white relative overflow-hidden"
+                style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)" }}>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-1 opacity-90">
+                    <MapPin size={14} />
+                    <span className="text-sm font-medium">{weather.city}</span>
+                  </div>
+                  <div className="flex items-end gap-4 mt-2">
+                    <div className="text-7xl font-bold leading-none">{cur!.temp}°</div>
+                    <div className="mb-2">
+                      <div className="text-lg font-semibold opacity-90">{curWmo!.icon} {curWmo!.label}</div>
+                      <div className="text-sm opacity-75">Hissedilen: {cur!.feels}°C</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-7xl font-bold leading-none mt-2">{cur!.temp}°</div>
-                <div className="text-xl mt-1 opacity-90">{curWmo!.icon} {curWmo!.label}</div>
-                <div className="text-sm mt-1 opacity-75">Hissedilen: {cur!.feels}°C</div>
+                <div className="text-8xl opacity-20 absolute right-6 top-4 select-none">{curWmo!.icon}</div>
+                <div className="grid grid-cols-4 gap-3 mt-6 pt-5"
+                  style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}>
+                  {[
+                    { icon: <Droplets size={15} />, label: "Nem",    value: `%${cur!.humidity}` },
+                    { icon: <Wind size={15} />,     label: "Rüzgar", value: `${cur!.wind} km/s` },
+                    { icon: <Sun size={15} />,      label: "UV",     value: cur!.uv.toString() },
+                    { icon: <CloudRain size={15} />,label: "Yağış",  value: `${cur!.precip} mm` },
+                  ].map((s) => (
+                    <div key={s.label} className="text-center">
+                      <div className="opacity-70 flex justify-center mb-1">{s.icon}</div>
+                      <div className="font-bold text-sm">{s.value}</div>
+                      <div className="text-xs opacity-60 mt-0.5">{s.label}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="text-8xl opacity-20 absolute right-6 top-4 select-none">{curWmo!.icon}</div>
+
+              <div className="card p-5 flex-1 flex flex-col">
+                <h2 className="text-sm font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
+                  Bugün Saatlik Tahmin
+                </h2>
+                <div className="flex-1 flex items-center gap-2 overflow-x-auto pb-1">
+                  {weather.hourly.map((h, i) => (
+                    <div key={i} className="flex flex-col items-center gap-1.5 px-3 py-4 rounded-2xl flex-shrink-0 flex-1 min-w-[72px]"
+                      style={{ background: i === 0 ? "var(--primary)" : "var(--bg)", color: i === 0 ? "white" : "var(--text)" }}>
+                      <span className="text-xs font-semibold opacity-80">{fmtHour(h.time)}</span>
+                      <span className="text-xl">{wmo(h.code).icon}</span>
+                      <span className="text-sm font-bold">{h.temp}°</span>
+                      <span className="text-xs opacity-70">💧{h.precip}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* Detay satırı */}
-            <div className="grid grid-cols-4 gap-3 mt-6 pt-5"
-              style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}>
-              {[
-                { icon: <Droplets size={15} />, label: "Nem",      value: `%${cur!.humidity}` },
-                { icon: <Wind size={15} />,     label: "Rüzgar",   value: `${cur!.wind} km/s ${windDir(cur!.windDir)}` },
-                { icon: <Sun size={15} />,      label: "UV",       value: cur!.uv.toString() },
-                { icon: <CloudRain size={15} />,label: "Yağış",    value: `${cur!.precip} mm` },
-              ].map((s) => (
-                <div key={s.label} className="text-center">
-                  <div className="opacity-70 flex justify-center mb-1">{s.icon}</div>
-                  <div className="font-bold text-sm">{s.value}</div>
-                  <div className="text-xs opacity-60 mt-0.5">{s.label}</div>
-                </div>
-              ))}
+            {/* Sağ: 7 günlük */}
+            <div className="card p-5 h-full">
+              <h2 className="text-sm font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
+                7 Günlük Tahmin
+              </h2>
+              <div>
+                {weather.daily.map((d, i) => (
+                  <div key={i} className="flex items-center gap-3 px-2 py-3 rounded-xl transition-colors hover:bg-orange-50"
+                    style={{ borderBottom: i < weather.daily.length - 1 ? "1px solid var(--border)" : "none" }}>
+                    <span className="text-sm font-semibold w-16 flex-shrink-0" style={{ color: i === 0 ? "var(--primary)" : "var(--text)" }}>
+                      {i === 0 ? "Bugün" : fmtDate(d.date)}
+                    </span>
+                    <span className="text-xl w-7 flex-shrink-0">{wmo(d.code).icon}</span>
+                    <span className="text-xs flex-1 truncate" style={{ color: "var(--text-light)" }}>{wmo(d.code).label}</span>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <CloudRain size={11} style={{ color: "var(--info)" }} />
+                      <span className="text-xs" style={{ color: "var(--info)" }}>%{d.rainProb}</span>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <Thermometer size={11} style={{ color: "var(--primary)" }} />
+                      <span className="text-sm font-bold" style={{ color: "var(--text)" }}>{d.maxTemp}°</span>
+                      <span className="text-sm" style={{ color: "var(--text-light)" }}>{d.minTemp}°</span>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <Navigation size={11} style={{ color: "var(--text-light)" }} />
+                      <span className="text-xs" style={{ color: "var(--text-light)" }}>{d.maxWind}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Saatlik tahmin */}
-          <div className="card p-5">
-            <h2 className="text-sm font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
-              Bugün Saatlik Tahmin
-            </h2>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {weather.hourly.map((h, i) => (
-                <div key={i} className="flex flex-col items-center gap-1.5 px-3 py-3 rounded-2xl flex-shrink-0 min-w-[64px]"
-                  style={{ background: i === 0 ? "var(--primary)" : "var(--bg)", color: i === 0 ? "white" : "var(--text)" }}>
-                  <span className="text-xs font-semibold opacity-80">{fmtHour(h.time)}</span>
-                  <span className="text-2xl">{wmo(h.code).icon}</span>
-                  <span className="text-sm font-bold">{h.temp}°</span>
-                  <span className="text-xs opacity-70">💧{h.precip}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 7 günlük tahmin */}
-          <div className="card p-5">
-            <h2 className="text-sm font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
-              7 Günlük Tahmin
-            </h2>
-            <div className="space-y-1">
-              {weather.daily.map((d, i) => (
-                <div key={i} className="flex items-center gap-4 px-2 py-3 rounded-xl transition-colors hover:bg-orange-50"
-                  style={{ borderBottom: i < weather.daily.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <span className="text-sm font-semibold w-20 flex-shrink-0" style={{ color: i === 0 ? "var(--primary)" : "var(--text)" }}>
-                    {i === 0 ? "Bugün" : fmtDate(d.date)}
-                  </span>
-                  <span className="text-xl w-8 flex-shrink-0">{wmo(d.code).icon}</span>
-                  <span className="text-xs flex-1 truncate" style={{ color: "var(--text-light)" }}>{wmo(d.code).label}</span>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <CloudRain size={12} style={{ color: "var(--info)" }} />
-                    <span className="text-xs" style={{ color: "var(--info)" }}>%{d.rainProb}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <Thermometer size={12} style={{ color: "var(--primary)" }} />
-                    <span className="text-sm font-bold" style={{ color: "var(--text)" }}>{d.maxTemp}°</span>
-                    <span className="text-sm" style={{ color: "var(--text-light)" }}>{d.minTemp}°</span>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <Navigation size={12} style={{ color: "var(--text-light)" }} />
-                    <span className="text-xs" style={{ color: "var(--text-light)" }}>{d.maxWind} km/s</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Ek detaylar */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+          {/* Alt: 4 detay kartı yan yana */}
+          <div className="grid grid-cols-4 gap-4">
             {[
-              { icon: <Droplets size={22} style={{ color: "var(--info)" }} />, label: "Nem", value: `%${cur!.humidity}`, sub: "Bağıl nem", bg: "#EAF1F7", iconBg: "#D0E6F3" },
-              { icon: <Wind size={22} style={{ color: "var(--success)" }} />, label: "Rüzgar", value: `${cur!.wind} km/s`, sub: windDir(cur!.windDir) + " yönünden", bg: "#EAF7EE", iconBg: "#C6EDD5" },
-              { icon: <Sun size={22} style={{ color: "#F59E0B" }} />, label: "UV İndeksi", value: `${cur!.uv}`, sub: cur!.uv <= 2 ? "Düşük" : cur!.uv <= 5 ? "Orta" : cur!.uv <= 7 ? "Yüksek" : "Çok yüksek", bg: "#FEF9EC", iconBg: "#FDE9A2" },
-              { icon: <CloudRain size={22} style={{ color: "var(--primary)" }} />, label: "Yağış", value: `${cur!.precip} mm`, sub: "Son 1 saatte", bg: "var(--primary-soft)", iconBg: "#EBC8B8" },
+              { icon: <Droplets size={20} style={{ color: "var(--info)" }} />, label: "Nem", value: `%${cur!.humidity}`, sub: "Bağıl nem", bg: "#EAF1F7", iconBg: "#D0E6F3" },
+              { icon: <Wind size={20} style={{ color: "var(--success)" }} />, label: "Rüzgar", value: `${cur!.wind} km/s`, sub: windDir(cur!.windDir) + " yönünden", bg: "#EAF7EE", iconBg: "#C6EDD5" },
+              { icon: <Sun size={20} style={{ color: "#F59E0B" }} />, label: "UV İndeksi", value: `${cur!.uv}`, sub: cur!.uv <= 2 ? "Düşük" : cur!.uv <= 5 ? "Orta" : cur!.uv <= 7 ? "Yüksek" : "Çok yüksek", bg: "#FEF9EC", iconBg: "#FDE9A2" },
+              { icon: <CloudRain size={20} style={{ color: "var(--primary)" }} />, label: "Yağış", value: `${cur!.precip} mm`, sub: "Son 1 saatte", bg: "var(--primary-soft)", iconBg: "#EBC8B8" },
             ].map((s) => (
-              <div key={s.label} className="rounded-2xl p-4 flex flex-col gap-3" style={{ background: s.bg }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: s.iconBg }}>
+              <div key={s.label} className="rounded-2xl p-4 flex gap-3 items-center" style={{ background: s.bg }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: s.iconBg }}>
                   {s.icon}
                 </div>
                 <div>
-                  <div className="text-xl font-bold leading-none" style={{ color: "var(--text)" }}>{s.value}</div>
-                  <div className="text-xs font-semibold mt-1" style={{ color: "var(--text-light)" }}>{s.label}</div>
+                  <div className="text-lg font-bold leading-none" style={{ color: "var(--text)" }}>{s.value}</div>
+                  <div className="text-xs font-semibold mt-0.5" style={{ color: "var(--text-light)" }}>{s.label}</div>
                   <div className="text-xs mt-0.5" style={{ color: "var(--text-light)", opacity: 0.7 }}>{s.sub}</div>
                 </div>
               </div>
             ))}
           </div>
-        </>
+
+        </div>
       )}
 
       {!weather && !loading && !error && (

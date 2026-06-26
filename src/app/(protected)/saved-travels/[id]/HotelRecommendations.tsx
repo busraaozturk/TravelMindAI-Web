@@ -133,8 +133,8 @@ export default function HotelRecommendations({ hotels }: { hotels: any[] }) {
             {/* Neden öneriliyor */}
             {hotel.whyRecommended && (
               <div style={{
-                background: "#F0FAF4", borderRadius: "10px", padding: "10px 12px",
-                fontSize: ".82rem", color: "#3D7A57", lineHeight: 1.55,
+                background: "var(--success-soft)", borderRadius: "10px", padding: "10px 12px",
+                fontSize: ".82rem", color: "var(--success)", lineHeight: 1.55,
                 display: "flex", gap: "6px", alignItems: "flex-start",
               }}>
                 <span style={{ fontSize: "1rem", flexShrink: 0 }}>💡</span>
@@ -177,20 +177,20 @@ export default function HotelRecommendations({ hotels }: { hotels: any[] }) {
             {(hotel.pros?.length || hotel.cons?.length) && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                 {hotel.pros?.length > 0 && (
-                  <div style={{ background: "#F0FAF4", borderRadius: "10px", padding: "10px 12px" }}>
-                    <div style={{ fontSize: ".75rem", fontWeight: 700, color: "#3D7A57", marginBottom: "6px" }}>Artıları</div>
+                  <div style={{ background: "var(--success-soft)", borderRadius: "10px", padding: "10px 12px" }}>
+                    <div style={{ fontSize: ".75rem", fontWeight: 700, color: "var(--success)", marginBottom: "6px" }}>Artıları</div>
                     {hotel.pros.map((p: string, j: number) => (
-                      <div key={j} style={{ fontSize: ".75rem", color: "#3D7A57", display: "flex", gap: "5px", marginBottom: "3px" }}>
+                      <div key={j} style={{ fontSize: ".75rem", color: "var(--success)", display: "flex", gap: "5px", marginBottom: "3px" }}>
                         <span>✓</span>{p}
                       </div>
                     ))}
                   </div>
                 )}
                 {hotel.cons?.length > 0 && (
-                  <div style={{ background: "#FFFBEA", borderRadius: "10px", padding: "10px 12px" }}>
-                    <div style={{ fontSize: ".75rem", fontWeight: 700, color: "#92600A", marginBottom: "6px" }}>Dikkat</div>
+                  <div style={{ background: "var(--warning-soft)", borderRadius: "10px", padding: "10px 12px" }}>
+                    <div style={{ fontSize: ".75rem", fontWeight: 700, color: "var(--warning-text)", marginBottom: "6px" }}>Dikkat</div>
                     {hotel.cons.map((c: string, j: number) => (
-                      <div key={j} style={{ fontSize: ".75rem", color: "#92600A", display: "flex", gap: "5px", marginBottom: "3px" }}>
+                      <div key={j} style={{ fontSize: ".75rem", color: "var(--warning-text)", display: "flex", gap: "5px", marginBottom: "3px" }}>
                         <span>⚠</span>{c}
                       </div>
                     ))}

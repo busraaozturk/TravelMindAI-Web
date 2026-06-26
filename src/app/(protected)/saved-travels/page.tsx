@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { MapPin, Clock, Wallet, Users, Plus, Calendar } from "lucide-react";
+import { Plus } from "lucide-react";
+import PlanCard from "./PlanCard";
 
 export default async function SavedTravelsPage() {
   const supabase = await createClient();
@@ -37,39 +38,7 @@ export default async function SavedTravelsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan) => (
-            <Link key={plan.id} href={`/saved-travels/${plan.id}`}
-              className="card p-5 hover:shadow-lg transition-all hover:-translate-y-0.5 block">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <MapPin size={16} style={{ color: "var(--primary)" }} />
-                    <span className="font-bold text-lg">{plan.destination}</span>
-                  </div>
-                  <p className="text-sm text-slate-500 line-clamp-1">{plan.title}</p>
-                </div>
-              </div>
-              <div className="border-t border-slate-100 pt-3 grid grid-cols-2 gap-2 text-sm text-slate-600">
-                <span className="flex items-center gap-1.5">
-                  <Calendar size={13} className="text-slate-400" />
-                  {new Date(plan.start_date).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Clock size={13} className="text-slate-400" />
-                  {plan.duration_days} gün
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Wallet size={13} className="text-slate-400" />
-                  {plan.budget?.toLocaleString("tr-TR")} {plan.currency}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Users size={13} className="text-slate-400" />
-                  {plan.travelers} kişi
-                </span>
-              </div>
-              <div className="mt-3 text-xs text-slate-400">
-                {new Date(plan.created_at).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
-              </div>
-            </Link>
+            <PlanCard key={plan.id} plan={plan} />
           ))}
 
           {/* New plan card */}

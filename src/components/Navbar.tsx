@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Plane, LayoutDashboard, BookMarked, DollarSign, CloudSun, LogOut, Menu, X, Plus } from "lucide-react";
+import { LayoutDashboard, BookMarked, DollarSign, CloudSun, LogOut, Menu, X, Plus } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard",     label: "Ana Sayfa",          icon: LayoutDashboard },
@@ -30,11 +30,13 @@ export default function Navbar({ userEmail }: { userEmail?: string }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2.5 font-bold text-lg" style={{ fontFamily: "var(--font-dm-sans)", color: "var(--primary)" }}>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--primary)" }}>
-              <Plane size={16} className="text-white" />
+          <Link href="/dashboard" className="flex items-center gap-2.5 font-bold text-lg" style={{ fontFamily: "var(--font-dm-sans)", color: "var(--text)" }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, var(--primary), var(--secondary))" }}>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2 19 21l-7-4-7 4Z"/>
+              </svg>
             </div>
-            TravelMind AI
+            TravelMind <em style={{ fontStyle: "normal", color: "var(--primary)" }}>AI</em>
           </Link>
 
           {/* Desktop nav */}

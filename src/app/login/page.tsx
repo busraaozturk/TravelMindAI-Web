@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Eye, EyeOff, Plane, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,94 +38,124 @@ export default function LoginPage() {
     });
   }
 
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "10px 16px 10px 42px",
+    border: "1.5px solid var(--border)", borderRadius: 10,
+    fontSize: 15, outline: "none", background: "white",
+    color: "var(--text)", fontFamily: "var(--font-inter), sans-serif",
+    boxSizing: "border-box",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: "block", fontSize: 14, fontWeight: 600,
+    marginBottom: 6, color: "var(--text)",
+    fontFamily: "var(--font-dm-sans), sans-serif",
+  };
+
   return (
-    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md fade-in-up">
+    <div style={{
+      height: "100vh", overflow: "hidden",
+      background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, #8B3E25 100%)",
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
+    }}>
+      <div style={{ width: "100%", maxWidth: 500 }}>
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/15 backdrop-blur mb-4">
-            <Plane className="text-white" size={32} />
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 48, height: 48, borderRadius: 14, marginBottom: 10,
+            background: "linear-gradient(135deg, var(--primary), var(--secondary))",
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2 19 21l-7-4-7 4Z"/>
+            </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white" style={{ fontFamily: "var(--font-dm-sans)" }}>TravelMind AI</h1>
-          <p className="text-orange-100 mt-1">Yapay zeka destekli seyahat planlayıcı</p>
+          <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "white", fontFamily: "var(--font-dm-sans), sans-serif", margin: 0 }}>
+            TravelMind <em style={{ fontStyle: "normal", color: "var(--secondary)" }}>AI</em>
+          </h1>
+          <p style={{ color: "rgba(255,255,255,0.75)", marginTop: 2, fontSize: 13 }}>
+            Yapay zeka destekli seyahat planlayıcı
+          </p>
         </div>
 
-        <div className="card p-8">
-          <h2 className="text-2xl font-bold text-center mb-6" style={{ color: "var(--text)" }}>
-            Giriş Yap
-          </h2>
+        {/* Kart */}
+        <div style={{
+          background: "white", borderRadius: 16, padding: "28px 36px",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+        }}>
+          <h2 style={{
+            textAlign: "center", fontSize: "1.25rem", fontWeight: 700,
+            color: "var(--text)", marginBottom: 18,
+            fontFamily: "var(--font-dm-sans), sans-serif",
+          }}>Giriş Yap</h2>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 mb-4 text-sm">
-              {error}
-            </div>
+            <div style={{
+              background: "#FEF2F2", border: "1px solid #FECACA",
+              color: "#B91C1C", borderRadius: 10, padding: "10px 14px",
+              fontSize: 14, marginBottom: 16,
+            }}>{error}</div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>
-                E-posta
-              </label>
-              <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field pl-11"
-                  placeholder="ornek@email.com"
-                  required
-                />
+              <label style={labelStyle}>E-posta</label>
+              <div style={{ position: "relative" }}>
+                <Mail size={17} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }} />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  style={inputStyle} placeholder="ornek@email.com" required />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>
-                Şifre
-              </label>
-              <div className="relative">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pl-11 pr-11"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              <label style={labelStyle}>Şifre</label>
+              <div style={{ position: "relative" }}>
+                <Lock size={17} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }} />
+                <input type={showPassword ? "text" : "password"} value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  style={{ ...inputStyle, paddingRight: 44 }} placeholder="••••••••" required />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-light)", display: "flex", alignItems: "center", padding: 0 }}>
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" className="btn-primary w-full text-base py-3" disabled={loading}>
-              {loading ? <span className="spinner" /> : "Giriş Yap"}
+            <button type="submit" disabled={loading} style={{
+              width: "100%", padding: "11px 24px", borderRadius: 10,
+              background: "var(--primary)", color: "white",
+              border: "none", fontFamily: "var(--font-dm-sans), sans-serif",
+              fontWeight: 600, fontSize: 15, cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "all 0.2s", boxSizing: "border-box",
+            }}>
+              {loading ? <span style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} /> : "Giriş Yap"}
             </button>
           </form>
 
-          <div className="relative my-5">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200" />
+          {/* Ayraç */}
+          <div style={{ position: "relative", margin: "14px 0" }}>
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center" }}>
+              <div style={{ width: "100%", borderTop: "1px solid var(--border)" }} />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-3 text-slate-500">veya</span>
+            <div style={{ position: "relative", display: "flex", justifyContent: "center", fontSize: 13 }}>
+              <span style={{ background: "white", padding: "0 12px", color: "var(--text-light)" }}>veya</span>
             </div>
           </div>
 
-          <button
-            onClick={handleGoogle}
-            disabled={googleLoading}
-            className="btn-secondary w-full flex items-center justify-center gap-3 py-3"
-          >
+          {/* Google */}
+          <button onClick={handleGoogle} disabled={googleLoading} style={{
+            width: "100%", padding: "10px 24px", borderRadius: 10,
+            background: "white", color: "var(--text)",
+            border: "1.5px solid var(--border)", fontFamily: "var(--font-dm-sans), sans-serif",
+            fontWeight: 600, fontSize: 14, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+            transition: "all 0.2s", boxSizing: "border-box",
+          }}>
             {googleLoading ? (
-              <span className="spinner" style={{ borderTopColor: "var(--primary)", borderColor: "rgba(201,108,74,0.2)" }} />
+              <span style={{ width: 18, height: 18, border: "2px solid var(--border)", borderTopColor: "var(--primary)", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
             ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24">
+              <svg width="18" height="18" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
@@ -135,11 +165,9 @@ export default function LoginPage() {
             Google ile giriş yap
           </button>
 
-          <p className="text-center mt-6 text-sm text-slate-600">
+          <p style={{ textAlign: "center", marginTop: 14, fontSize: 13, color: "var(--text-light)" }}>
             Hesabın yok mu?{" "}
-            <Link href="/register" className="font-semibold" style={{ color: "var(--primary)" }}>
-              Kayıt Ol
-            </Link>
+            <Link href="/register" style={{ fontWeight: 600, color: "var(--primary)" }}>Kayıt Ol</Link>
           </p>
         </div>
       </div>

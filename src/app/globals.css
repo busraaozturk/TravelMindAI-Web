@@ -1,29 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --primary:      #C96C4A;
-  --primary-dark: #B05A3A;
-  --primary-soft: #F6E3DA;
-
+  --primary:        #C96C4A;
+  --primary-dark:   #B05A3A;
+  --primary-soft:   #F6E3DA;
   --secondary:      #E8B27D;
   --secondary-soft: #FBEEDD;
-
-  --success: #5E9C76;
+  --success:      #5E9C76;
+  --success-soft: #E7F2EB;
   --info:      #6B8CAE;
   --info-soft: #EAF1F7;
-
   --bg:     #FFF8F2;
   --card:   #FFFFFF;
   --border: #F1E4D8;
-
   --text:       #2D3748;
   --text-light: #718096;
-
+  --shadow-sm: 0 1px 3px rgba(45,55,72,.05), 0 4px 14px rgba(201,108,74,.06);
+  --shadow-md: 0 4px 10px rgba(45,55,72,.06), 0 14px 38px rgba(201,108,74,.10);
+  --radius:    16px;
+  --radius-sm: 10px;
   --chart-accommodation: #C96C4A;
   --chart-food:          #E8B27D;
   --chart-transport:     #6B8CAE;
   --chart-activities:    #5E9C76;
   --chart-emergency:     #CBB8A6;
+  --star:           #F5A623;
+  --error:          #B91C1C;
+  --error-soft:     #FEE2E2;
+  --warning-soft:   #FEF3C7;
+  --warning-text:   #92400E;
+  --footer-bg:      #FBF1E8;
+  --section-alt-bg: #FDF3EA;
 }
 
 @theme inline {
@@ -31,6 +38,12 @@
   --color-foreground: var(--text);
   --font-sans: var(--font-inter);
   --font-display: var(--font-dm-sans);
+  --color-slate-100: var(--border);
+  --color-slate-200: var(--border);
+  --color-slate-400: var(--text-light);
+  --color-slate-500: var(--text-light);
+  --color-slate-600: var(--text);
+  --color-slate-700: var(--text);
 }
 
 * { box-sizing: border-box; }
@@ -43,6 +56,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-dm-sans), sans-serif;
+  line-height: 1.15;
+  letter-spacing: -.01em;
 }
 
 /* Auth sayfaları gradient arka planı */
@@ -53,23 +68,23 @@ h1, h2, h3, h4, h5, h6 {
 /* Kart */
 .card {
   background: var(--card);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
 }
 
 .card-soft {
   background: var(--primary-soft);
-  border-radius: 16px;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
 }
 
-/* Butonlar */
+/* App butonları */
 .btn-primary {
-  background: linear-gradient(135deg, #C96C4A, #B05A3A);
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 12px 24px;
   font-family: var(--font-dm-sans), sans-serif;
   font-weight: 600;
@@ -82,6 +97,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
+  background: var(--primary-dark);
   transform: translateY(-1px);
   box-shadow: 0 8px 24px rgba(201, 108, 74, 0.35);
 }
@@ -97,7 +113,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--card);
   color: var(--text);
   border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 10px 24px;
   font-family: var(--font-dm-sans), sans-serif;
   font-weight: 600;
@@ -114,12 +130,9 @@ h1, h2, h3, h4, h5, h6 {
 /* Input */
 .input-field {
   width: 100%;
-  padding-top: 11px;
-  padding-bottom: 11px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 11px 16px;
   border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
   font-family: var(--font-inter), sans-serif;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -133,8 +146,8 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 0 3px rgba(201, 108, 74, 0.12);
 }
 
-.input-field.pl-11  { padding-left:  2.75rem; }
-.input-field.pl-10  { padding-left:  2.5rem;  }
+.input-field.pl-11  { padding-left: 2.75rem; }
+.input-field.pl-10  { padding-left: 2.5rem; }
 .input-field.pr-11  { padding-right: 2.75rem; }
 
 /* Step dots */
@@ -173,7 +186,6 @@ h1, h2, h3, h4, h5, h6 {
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-in-up { animation: fadeInUp 0.4s ease forwards; }
-
 
 .hover-plan-card:hover {
   border-color: var(--primary) !important;

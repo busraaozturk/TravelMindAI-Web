@@ -8,22 +8,36 @@ import { Check, MapPin, Wallet, Heart, Hotel, FileText, Plane, Loader2, User, Us
 const MONTHS_TR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const DAYS_TR = ["Pt","Sa","Ça","Pe","Cu","Ct","Pz"];
 
+// "YYYY-MM-DD" → yerel tarih olarak parse (UTC kaymasını önler)
+function parseLocalDate(str: string): Date {
+  const [y, m, d] = str.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// Date → "YYYY-MM-DD" (UTC dönüşümü olmadan)
+function toLocalISODate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function DatePicker({ label, value, onChange, min }: { label: string; value: string; onChange: (v: string) => void; min?: string }) {
   const [open, setOpen] = useState(false);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const minDate = min ? new Date(min) : today;
-  const selected = value ? new Date(value) : null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const minDate = min ? parseLocalDate(min) : today;
+  const selected = value ? parseLocalDate(value) : null;
   const [view, setView] = useState(() => {
     const d = selected || minDate;
     return { year: d.getFullYear(), month: d.getMonth() };
   });
 
   function daysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
-  function firstDay(y: number, m: number) { return (new Date(y, m, 1).getDay() + 6) % 7; } // Mon=0
+  function firstDay(y: number, m: number) { return (new Date(y, m, 1).getDay() + 6) % 7; }
 
   function selectDay(day: number) {
     const d = new Date(view.year, view.month, day);
-    onChange(d.toISOString().split("T")[0]);
+    onChange(toLocalISODate(d));
     setOpen(false);
   }
 
@@ -41,7 +55,7 @@ function DatePicker({ label, value, onChange, min }: { label: string; value: str
   }
 
   const displayValue = selected
-    ? selected.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" })
+    ? `${String(selected.getDate()).padStart(2,"0")}.${String(selected.getMonth()+1).padStart(2,"0")}.${selected.getFullYear()}`
     : "";
 
   const totalDays = daysInMonth(view.year, view.month);
@@ -137,7 +151,7 @@ export default function PlanPage() {
     destination: "",
     startDate: "",
     endDate: "",
-    duration: "3",
+    duration: "0",
     budget: "",
     currency: "TRY",
     travelers: "1",
@@ -184,18 +198,36 @@ export default function PlanPage() {
 
   function getDuration() {
     if (form.startDate && form.endDate) {
-      const diff = (new Date(form.endDate).getTime() - new Date(form.startDate).getTime()) / (1000 * 60 * 60 * 24);
-      return Math.max(1, Math.round(diff));
+      const start = parseLocalDate(form.startDate);
+      const end = parseLocalDate(form.endDate);
+      const diff = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      return Math.max(1, diff + 1); // dahil hesaplama
     }
-    return Number(form.duration) || 3;
+    return Number(form.duration) || 1;
   }
 
   function handleDateChange(key: "startDate" | "endDate", value: string) {
     setForm((f) => {
       const updated = { ...f, [key]: value };
       if (updated.startDate && updated.endDate) {
-        const diff = Math.max(1, Math.round((new Date(updated.endDate).getTime() - new Date(updated.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1);
-        updated.duration = String(diff);
+        const start = parseLocalDate(updated.startDate);
+        const end = parseLocalDate(updated.endDate);
+        const diff = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        updated.duration = String(Math.max(1, diff + 1));
+      }
+      return updated;
+    });
+  }
+
+  function handleDurationChange(value: string) {
+    const days = Math.max(1, Math.min(14, Number(value) || 1));
+    setForm((f) => {
+      const updated = { ...f, duration: String(days) };
+      if (f.startDate) {
+        const start = parseLocalDate(f.startDate);
+        const end = new Date(start);
+        end.setDate(end.getDate() + days - 1); // dahil hesaplama
+        updated.endDate = toLocalISODate(end);
       }
       return updated;
     });
@@ -374,7 +406,7 @@ export default function PlanPage() {
                 type="number" className="input-field" min="1" max="14"
                 style={{ background: "var(--bg)" }}
                 value={form.duration}
-                onChange={(e) => set("duration", e.target.value)}
+                onChange={(e) => handleDurationChange(e.target.value)}
               />
             </div>
           </div>
@@ -705,7 +737,7 @@ export default function PlanPage() {
             {/* Konaklama durumu */}
             <div>
               <label className="block text-sm font-semibold mb-3" style={{ color: "var(--text)" }}>Otel rezervasyonunuz var mı?</label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {[
                   { value: "var",    Icon: Hotel,   label: "Evet",             desc: "Mevcut rezervasyonum var" },
                   { value: "yok",    Icon: MapPin,  label: "Hayır",             desc: "Bana otel önerisi yap" },

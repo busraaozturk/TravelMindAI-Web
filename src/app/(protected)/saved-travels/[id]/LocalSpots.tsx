@@ -41,7 +41,7 @@ export default function LocalSpots({ spots }: { spots: Spot[] }) {
           }}>
             <div style={{
               width: "30px", height: "30px", borderRadius: "50%",
-              background: "#F0FAF4", color: "#5E9C76",
+              background: "var(--success-soft)", color: "var(--success)",
               display: "grid", placeItems: "center", flexShrink: 0, marginTop: "1px",
             }}>
               <Users size={13} />

@@ -32,9 +32,16 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const authRoutes = ["/login", "/register"];
-  const protectedRoutes = ["/dashboard", "/plan", "/saved-travels", "/currency"];
 
-  if (!user && protectedRoutes.some((r) => pathname.startsWith(r))) {
+  // Giriş gerektiren tüm rotalar — /auth ve api hariç her şey
+  const isPublic =
+    authRoutes.includes(pathname) ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/api") ||
+    pathname === "/" ||
+    pathname === "";
+
+  if (!user && !isPublic) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
