@@ -188,8 +188,8 @@ export default function WeatherPage() {
       {weather && !loading && (
         <div className="space-y-4">
 
-          {/* Üst: 2 eşit kolon */}
-          <div className="grid grid-cols-2 gap-5 items-stretch">
+          {/* Üst: 2 eşit kolon — mobilde alt alta */}
+          <div className="grid gap-5 items-stretch" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))" }}>
 
             {/* Sol: Anlık hava + Saatlik */}
             <div className="flex flex-col gap-4">
@@ -200,8 +200,8 @@ export default function WeatherPage() {
                     <MapPin size={14} />
                     <span className="text-sm font-medium">{weather.city}</span>
                   </div>
-                  <div className="flex items-end gap-4 mt-2">
-                    <div className="text-7xl font-bold leading-none">{cur!.temp}°</div>
+                  <div className="flex items-end gap-4 mt-2 flex-wrap">
+                    <div className="font-bold leading-none" style={{ fontSize: "clamp(3rem, 10vw, 4.5rem)" }}>{cur!.temp}°</div>
                     <div className="mb-2">
                       <div className="text-lg font-semibold opacity-90">{curWmo!.icon} {curWmo!.label}</div>
                       <div className="text-sm opacity-75">Hissedilen: {cur!.feels}°C</div>
@@ -251,25 +251,20 @@ export default function WeatherPage() {
               </h2>
               <div>
                 {weather.daily.map((d, i) => (
-                  <div key={i} className="flex items-center gap-3 px-2 py-3 rounded-xl transition-colors hover:bg-orange-50"
-                    style={{ borderBottom: i < weather.daily.length - 1 ? "1px solid var(--border)" : "none" }}>
-                    <span className="text-sm font-semibold w-16 flex-shrink-0" style={{ color: i === 0 ? "var(--primary)" : "var(--text)" }}>
+                  <div key={i} style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 8px", borderBottom: i < weather.daily.length - 1 ? "1px solid var(--border)" : "none" }}>
+                    <span style={{ fontSize:13, fontWeight:600, minWidth:52, flexShrink:0, color: i === 0 ? "var(--primary)" : "var(--text)" }}>
                       {i === 0 ? "Bugün" : fmtDate(d.date)}
                     </span>
-                    <span className="text-xl w-7 flex-shrink-0">{wmo(d.code).icon}</span>
-                    <span className="text-xs flex-1 truncate" style={{ color: "var(--text-light)" }}>{wmo(d.code).label}</span>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <CloudRain size={11} style={{ color: "var(--info)" }} />
-                      <span className="text-xs" style={{ color: "var(--info)" }}>%{d.rainProb}</span>
-                    </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
+                    <span style={{ fontSize:20, flexShrink:0 }}>{wmo(d.code).icon}</span>
+                    <span style={{ fontSize:12, flex:1, minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", color:"var(--text-light)" }}>{wmo(d.code).label}</span>
+                    <div style={{ display:"flex", alignItems:"center", gap:3, flexShrink:0 }}>
                       <Thermometer size={11} style={{ color: "var(--primary)" }} />
-                      <span className="text-sm font-bold" style={{ color: "var(--text)" }}>{d.maxTemp}°</span>
-                      <span className="text-sm" style={{ color: "var(--text-light)" }}>{d.minTemp}°</span>
+                      <span style={{ fontSize:13, fontWeight:700, color:"var(--text)" }}>{d.maxTemp}°</span>
+                      <span style={{ fontSize:12, color:"var(--text-light)" }}>{d.minTemp}°</span>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Navigation size={11} style={{ color: "var(--text-light)" }} />
-                      <span className="text-xs" style={{ color: "var(--text-light)" }}>{d.maxWind}</span>
+                    <div style={{ display:"flex", alignItems:"center", gap:3, flexShrink:0 }}>
+                      <CloudRain size={11} style={{ color: "var(--info)" }} />
+                      <span style={{ fontSize:12, color:"var(--info)" }}>%{d.rainProb}</span>
                     </div>
                   </div>
                 ))}
@@ -277,8 +272,8 @@ export default function WeatherPage() {
             </div>
           </div>
 
-          {/* Alt: 4 detay kartı yan yana */}
-          <div className="grid grid-cols-4 gap-4">
+          {/* Alt: 4 detay kartı — mobilde 2x2 */}
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
             {[
               { icon: <Droplets size={20} style={{ color: "var(--info)" }} />, label: "Nem", value: `%${cur!.humidity}`, sub: "Bağıl nem", bg: "#EAF1F7", iconBg: "#D0E6F3" },
               { icon: <Wind size={20} style={{ color: "var(--success)" }} />, label: "Rüzgar", value: `${cur!.wind} km/s`, sub: windDir(cur!.windDir) + " yönünden", bg: "#EAF7EE", iconBg: "#C6EDD5" },

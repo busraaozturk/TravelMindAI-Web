@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LayoutDashboard, BookMarked, DollarSign, CloudSun, MessageSquare, LogOut, Menu, X, Plus } from "lucide-react";
+import { LayoutDashboard, BookMarked, DollarSign, CloudSun, MessageSquare, LogOut, Menu, X, Plus, User } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard",     label: "Ana Sayfa",          icon: LayoutDashboard },
@@ -19,6 +19,18 @@ export default function Navbar({ userEmail }: { userEmail?: string }) {
   const router = useRouter();
   const supabase = createClient();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -63,16 +75,62 @@ export default function Navbar({ userEmail }: { userEmail?: string }) {
               <Plus size={16} />
               Yeni Plan
             </Link>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm text-white uppercase"
-              style={{ background: "var(--primary)" }}>
-              {userEmail?.[0] ?? "U"}
+
+            {/* Avatar + Dropdown */}
+            <div ref={dropdownRef} style={{ position: "relative" }}>
+              <button
+                onClick={() => setDropdownOpen(o => !o)}
+                className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm text-white uppercase transition-all"
+                style={{ background: "var(--primary)", outline: dropdownOpen ? "2px solid var(--secondary)" : "none", outlineOffset: 2 }}
+              >
+                {userEmail?.[0] ?? "U"}
+              </button>
+
+              {dropdownOpen && (
+                <div style={{
+                  position: "absolute", top: "calc(100% + 8px)", right: 0,
+                  background: "var(--card)", border: "1px solid var(--border)",
+                  borderRadius: 12, boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
+                  minWidth: 200, zIndex: 100, overflow: "hidden",
+                }}>
+                  {/* Kullanıcı bilgisi */}
+                  <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid var(--border)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
+                        {userEmail?.[0]?.toUpperCase() ?? "U"}
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {userEmail ?? "Kullanıcı"}
+                        </div>
+                        <div style={{ fontSize: 11, color: "var(--text-light)" }}>Üye</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menü öğeleri */}
+                  <div style={{ padding: "6px 0" }}>
+                    <Link href="/account" onClick={() => setDropdownOpen(false)}
+                      style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 16px", fontSize: 14, color: "var(--text)", textDecoration: "none" }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--bg)"}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}>
+                      <User size={15} style={{ color: "var(--text-light)" }} />
+                      Hesabım
+                    </Link>
+
+                    <div style={{ height: 1, background: "var(--border)", margin: "4px 0" }} />
+
+                    <button onClick={() => { setDropdownOpen(false); handleLogout(); }}
+                      style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 16px", fontSize: 14, color: "#DC2626", background: "none", border: "none", cursor: "pointer", width: "100%", textAlign: "left" }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#FEF2F2"}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}>
+                      <LogOut size={15} />
+                      Çıkış Yap
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <button onClick={handleLogout} className="p-2 rounded-lg transition-colors"
-              style={{ color: "var(--text-light)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--primary)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-light)")}>
-              <LogOut size={18} />
-            </button>
           </div>
 
           {/* Mobile hamburger */}

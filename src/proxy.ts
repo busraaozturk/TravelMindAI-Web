@@ -38,6 +38,8 @@ export async function proxy(request: NextRequest) {
     authRoutes.includes(pathname) ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/api") ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password" ||
     pathname === "/" ||
     pathname === "";
 

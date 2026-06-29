@@ -34,6 +34,105 @@ function StarDisplay({ value }: { value: number }) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function SyncedReviewPanel({ reviews, ratingCounts, avgRating, loadingList, fmtDate }: any) {
+  const [height, setHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    function sync() {
+      const panel = document.getElementById("feedback-form-panel");
+      if (panel) setHeight(panel.offsetHeight);
+    }
+    sync();
+    const ro = new ResizeObserver(sync);
+    const panel = document.getElementById("feedback-form-panel");
+    if (panel) ro.observe(panel);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div className="card p-6" style={{
+      display: "flex", flexDirection: "column", overflow: "hidden",
+      height: height ?? "auto",
+    }}>
+      <h2 className="font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)", flexShrink: 0 }}>
+        Seyahat Yorumları
+      </h2>
+
+      {reviews.length > 0 && (
+        <div className="flex gap-6 items-center mb-4 pb-4 flex-shrink-0" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+            <div className="text-4xl font-bold leading-none" style={{ color: "var(--primary)", fontFamily: "var(--font-dm-sans)" }}>{avgRating}</div>
+            <StarDisplay value={Math.round(Number(avgRating))} />
+            <div className="text-xs mt-0.5" style={{ color: "var(--text-light)" }}>{reviews.length} değerlendirme</div>
+          </div>
+          <div style={{ width: 1, alignSelf: "stretch", background: "var(--border)", flexShrink: 0 }} />
+          <div className="flex-1" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {ratingCounts.map(({ star, count, pct }: { star: number; count: number; pct: number }) => (
+              <div key={star} className="flex items-center gap-2">
+                <span className="text-xs font-semibold w-3 text-right flex-shrink-0" style={{ color: "var(--text)" }}>{star}</span>
+                <Star size={10} style={{ color: "#F5A623", fill: "#F5A623", flexShrink: 0 }} />
+                <div className="flex-1 rounded-full overflow-hidden h-2" style={{ background: "var(--border)" }}>
+                  <div className="h-2 rounded-full" style={{ width: `${pct}%`, background: pct > 0 ? "var(--primary)" : "transparent" }} />
+                </div>
+                <span className="text-xs w-4 text-right flex-shrink-0" style={{ color: count > 0 ? "var(--text)" : "var(--text-light)" }}>{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {loadingList ? (
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "var(--text-light)" }}>
+          <div className="text-3xl mb-2 animate-pulse">💬</div>
+          Yorumlar yükleniyor...
+        </div>
+      ) : reviews.length === 0 ? (
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <div className="text-5xl mb-3">✍️</div>
+          <p className="font-semibold" style={{ color: "var(--text)" }}>Henüz yorum yok</p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-light)" }}>İlk yorumu sen yaz!</p>
+        </div>
+      ) : (
+        <div style={{ overflowY: "auto", flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 16, paddingRight: 4 }}>
+          {reviews.map((r: any) => (
+            <div key={r.id} style={{
+              background: "var(--card)", borderRadius: "var(--radius)",
+              border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)",
+              overflow: "hidden", flexShrink: 0,
+            }}>
+              <ReviewImages imageUrl={r.image_url} />
+              <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <Avatar name={r.full_name} />
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{r.full_name}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+                        <StarDisplay value={r.rating} />
+                        {r.plan_name && (
+                          <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 999, fontWeight: 600, background: "var(--primary-soft)", color: "var(--primary)" }}>
+                            {r.plan_name}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--text-light)", flexShrink: 0 }}>
+                    <Clock size={11} />
+                    {fmtDate(r.created_at)}
+                  </div>
+                </div>
+                <p style={{ fontSize: 14, lineHeight: 1.65, color: "#2D3748", margin: 0 }}>{r.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Avatar({ name, size = 36 }: { name: string; size?: number }) {
   const colors = ["#C96C4A","#6B8CAE","#5E9C76","#E8B27D","#B05A3A"];
   const color = colors[name.charCodeAt(0) % colors.length];
@@ -178,7 +277,7 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", height: "calc(100vh - 88px)", gap: 20 }}>
+    <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
 
       {/* Başlık */}
       <div className="flex items-center gap-3" style={{ flexShrink: 0 }}>
@@ -191,14 +290,14 @@ export default function FeedbackPage() {
         </div>
       </div>
 
-      {/* İki sütun */}
-      <div style={{ display: "grid", gridTemplateColumns: "480px 1fr", gap: 24, flex: 1, minHeight: 0 }}>
+      {/* İki sütun — mobilde alt alta */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))", gap: 24, alignItems: "start" }}>
 
-        {/* Sol: Yorum formu — sabit, scroll yok */}
-        <div style={{
+        {/* Sol: Yorum formu — yüksekliği içeriğe göre sabit */}
+        <div id="feedback-form-panel" style={{
           background: "var(--card)", borderRadius: "var(--radius)",
           boxShadow: "var(--shadow-sm)", border: "1px solid var(--border)",
-          padding: 28, display: "flex", flexDirection: "column", overflow: "hidden",
+          padding: 28, display: "flex", flexDirection: "column",
         }}>
           <h2 className="font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)", flexShrink: 0 }}>Yorum Yaz</h2>
 
@@ -234,7 +333,7 @@ export default function FeedbackPage() {
                     isteğe bağlı · max {MAX_IMAGES} resim
                   </span>
                 </label>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))", gap: 8 }}>
                   {Array.from({ length: MAX_IMAGES }).map((_, idx) => {
                     const src = imagePreviews[idx];
                     if (src) {
@@ -287,89 +386,7 @@ export default function FeedbackPage() {
           )}
         </div>
 
-        {/* Sağ: Yorum listesi — sadece içeride scroll */}
-        <div className="card p-6" style={{ overflow: "hidden", display: "flex", flexDirection: "column", minHeight: 0 }}>
-          <h2 className="font-bold mb-4 flex-shrink-0" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
-            Seyahat Yorumları
-          </h2>
-
-          {/* Özet istatistik — kart içinde */}
-          {reviews.length > 0 && (
-            <div className="flex gap-6 items-center mb-4 pb-4 flex-shrink-0" style={{ borderBottom: "1px solid var(--border)" }}>
-              <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                <div className="text-4xl font-bold leading-none" style={{ color: "var(--primary)", fontFamily: "var(--font-dm-sans)" }}>{avgRating}</div>
-                <StarDisplay value={Math.round(Number(avgRating))} />
-                <div className="text-xs mt-0.5" style={{ color: "var(--text-light)" }}>{reviews.length} değerlendirme</div>
-              </div>
-              <div style={{ width: 1, alignSelf: "stretch", background: "var(--border)", flexShrink: 0 }} />
-              <div className="flex-1 space-y-1.5">
-                {ratingCounts.map(({ star, count, pct }) => (
-                  <div key={star} className="flex items-center gap-2">
-                    <span className="text-xs font-semibold w-3 text-right flex-shrink-0" style={{ color: "var(--text)" }}>{star}</span>
-                    <Star size={10} style={{ color: "#F5A623", fill: "#F5A623", flexShrink: 0 }} />
-                    <div className="flex-1 rounded-full overflow-hidden h-2" style={{ background: "var(--border)" }}>
-                      <div className="h-2 rounded-full" style={{ width: `${pct}%`, background: pct > 0 ? "var(--primary)" : "transparent" }} />
-                    </div>
-                    <span className="text-xs w-4 text-right flex-shrink-0" style={{ color: count > 0 ? "var(--text)" : "var(--text-light)" }}>{count}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {loadingList ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center" style={{ color: "var(--text-light)" }}>
-              <div className="text-3xl mb-2 animate-pulse">💬</div>
-              Yorumlar yükleniyor...
-            </div>
-          ) : reviews.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center">
-              <div className="text-5xl mb-3">✍️</div>
-              <p className="font-semibold" style={{ color: "var(--text)" }}>Henüz yorum yok</p>
-              <p className="text-sm mt-1" style={{ color: "var(--text-light)" }}>İlk yorumu sen yaz!</p>
-            </div>
-          ) : (
-            <div style={{ overflowY: "auto", flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 16, paddingRight: 4 }}>
-              {reviews.map(r => (
-                <div key={r.id} style={{
-                  background: "var(--card)", borderRadius: "var(--radius)",
-                  border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)",
-                  overflow: "hidden", flexShrink: 0,
-                }}>
-                  <ReviewImages imageUrl={r.image_url} />
-                  <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-                    {/* Üst satır: avatar + isim + puan + tarih */}
-                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <Avatar name={r.full_name} />
-                        <div>
-                          <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{r.full_name}</div>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
-                            <StarDisplay value={r.rating} />
-                            {r.plan_name && (
-                              <span style={{
-                                fontSize: 11, padding: "2px 8px", borderRadius: 999, fontWeight: 600,
-                                background: "var(--primary-soft)", color: "var(--primary)",
-                              }}>
-                                {r.plan_name}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--text-light)", flexShrink: 0 }}>
-                        <Clock size={11} />
-                        {fmtDate(r.created_at)}
-                      </div>
-                    </div>
-                    {/* Yorum metni */}
-                    <p style={{ fontSize: 14, lineHeight: 1.65, color: "#2D3748", margin: 0 }}>{r.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <SyncedReviewPanel reviews={reviews} ratingCounts={ratingCounts} avgRating={avgRating} loadingList={loadingList} fmtDate={fmtDate} />
 
       </div>
 

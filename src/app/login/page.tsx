@@ -134,10 +134,26 @@ export default function LoginPage() {
           </form>
 
 
-          <p style={{ textAlign: "center", marginTop: 14, fontSize: 13, color: "var(--text-light)" }}>
-            Hesabın yok mu?{" "}
-            <Link href="/register" style={{ fontWeight: 600, color: "var(--primary)" }}>Kayıt Ol</Link>
-          </p>
+          {/* Alt linkler */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
+            <Link href="/forgot-password" style={{
+              fontSize: 13, color: "var(--text-light)", textDecoration: "none",
+              display: "inline-flex", alignItems: "center", gap: 4,
+              transition: "color .15s",
+            }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--primary)"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--text-light)"}
+            >
+              Şifremi Unuttum
+            </Link>
+
+            <p style={{ fontSize: 13, color: "var(--text-light)", margin: 0 }}>
+              Hesabın yok mu?{" "}
+              <Link href="/register" style={{ fontWeight: 600, color: "var(--primary)", textDecoration: "none" }}>
+                Kayıt Ol
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
