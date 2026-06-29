@@ -50,12 +50,14 @@ function ReviewImages({ imageUrl }: { imageUrl: string | null }) {
   let urls: string[] = [];
   try { urls = JSON.parse(imageUrl); } catch { urls = [imageUrl]; }
   if (!urls.length) return null;
+  const h = urls.length === 1 ? 120 : 90;
   return (
-    <div className={`grid gap-1 ${urls.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+    <div style={{ display: "flex", gap: 4, padding: "12px 12px 0" }}>
       {urls.map((url, i) => (
-        <img key={i} src={url} alt={`Seyahat fotoğrafı ${i + 1}`}
-          className="w-full object-cover"
-          style={{ height: urls.length === 1 ? 160 : 110 }} />
+        <div key={i} style={{ flex: 1, borderRadius: 10, overflow: "hidden", height: h }}>
+          <img src={url} alt={`Seyahat fotoğrafı ${i + 1}`}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        </div>
       ))}
     </div>
   );
@@ -176,10 +178,10 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-5">
+    <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", height: "calc(100vh - 88px)", gap: 20 }}>
 
       {/* Başlık */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3" style={{ flexShrink: 0 }}>
         <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: "var(--primary-soft)" }}>
           <MessageSquare size={20} style={{ color: "var(--primary)" }} />
         </div>
@@ -189,67 +191,78 @@ export default function FeedbackPage() {
         </div>
       </div>
 
-
       {/* İki sütun */}
-      <div className="flex gap-6 items-start">
+      <div style={{ display: "grid", gridTemplateColumns: "480px 1fr", gap: 24, flex: 1, minHeight: 0 }}>
 
-        {/* Sol: Yorum formu */}
-        <div className="card p-6 flex-shrink-0" style={{ width: 640 }}>
-          <h2 className="font-bold mb-5" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>Yorum Yaz</h2>
+        {/* Sol: Yorum formu — sabit, scroll yok */}
+        <div style={{
+          background: "var(--card)", borderRadius: "var(--radius)",
+          boxShadow: "var(--shadow-sm)", border: "1px solid var(--border)",
+          padding: 28, display: "flex", flexDirection: "column", overflow: "hidden",
+        }}>
+          <h2 className="font-bold mb-4" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)", flexShrink: 0 }}>Yorum Yaz</h2>
 
           {sent ? (
             <div className="flex items-center gap-3 py-3 text-sm font-semibold" style={{ color: "var(--success)" }}>
               <CheckCircle size={20} /> Yorumun yayınlandı, teşekkürler! 🎉
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: "var(--text)" }}>Puanın</label>
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 8, color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>Puanın</label>
                 <StarRating value={rating} onChange={setRating} />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--text)" }}>
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 6, color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
                   Hangi seyahat planın için?{" "}
-                  <span className="font-normal" style={{ color: "var(--text-light)" }}>isteğe bağlı</span>
+                  <span style={{ fontWeight: 400, color: "var(--text-light)" }}>isteğe bağlı</span>
                 </label>
                 <input className="input-field" placeholder="örn. İstanbul 3 Gün, Roma 5 Gün..."
                   value={planName} onChange={e => setPlanName(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--text)" }}>Yorumun</label>
-                <textarea className="input-field resize-none" rows={4}
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 6, color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>Yorumun</label>
+                <textarea className="input-field resize-none" rows={3}
                   placeholder="Seyahat deneyimini ve planın nasıl yardımcı olduğunu anlat..."
                   value={text} onChange={e => setText(e.target.value)} />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: "var(--text)" }}>
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 8, color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
                   Seyahat fotoğrafları{" "}
-                  <span className="font-normal" style={{ color: "var(--text-light)" }}>
+                  <span style={{ fontWeight: 400, color: "var(--text-light)" }}>
                     isteğe bağlı · max {MAX_IMAGES} resim
                   </span>
                 </label>
-                <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
-                  {imagePreviews.map((src, idx) => (
-                    <div key={idx} className="relative rounded-2xl" style={{ border: "2px solid var(--border)", padding: "6px" }}>
-                      <img src={src} alt={`Önizleme ${idx + 1}`}
-                        className="rounded-xl object-cover block w-full" style={{ height: 120 }} />
-                      <button type="button" onClick={() => removeImage(idx)}
-                        className="absolute w-6 h-6 rounded-full flex items-center justify-center"
-                        style={{ top: "6px", right: "6px", background: "var(--primary)", color: "white" }}>
-                        <X size={12} />
-                      </button>
-                    </div>
-                  ))}
-                  {imagePreviews.length < MAX_IMAGES && (
-                    <button type="button" onClick={() => fileRef.current?.click()}
-                      className="flex flex-col items-center justify-center gap-1 rounded-2xl font-medium transition-all"
-                      style={{ border: "2px dashed var(--border)", color: "var(--text-light)", background: "var(--bg)", width: "100%", height: 138 }}>
-                      <ImagePlus size={22} style={{ color: "var(--primary)" }} />
-                      <span className="text-xs">{imagePreviews.length > 0 ? "Ekle" : "Fotoğraf ekle"}</span>
-                      <span className="text-xs" style={{ opacity: 0.6 }}>{imagePreviews.length}/{MAX_IMAGES}</span>
-                    </button>
-                  )}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                  {Array.from({ length: MAX_IMAGES }).map((_, idx) => {
+                    const src = imagePreviews[idx];
+                    if (src) {
+                      return (
+                        <div key={idx} style={{ position: "relative", borderRadius: 12, border: "2px solid var(--border)", padding: 4 }}>
+                          <img src={src} alt={`Önizleme ${idx + 1}`}
+                            style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 8, display: "block" }} />
+                          <button type="button" onClick={() => removeImage(idx)}
+                            style={{ position: "absolute", top: 6, right: 6, width: 20, height: 20, borderRadius: "50%", background: "var(--primary)", color: "white", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <X size={10} />
+                          </button>
+                        </div>
+                      );
+                    }
+                    if (idx === imagePreviews.length) {
+                      return (
+                        <button key={idx} type="button" onClick={() => fileRef.current?.click()}
+                          style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, borderRadius: 12, border: "2px dashed var(--border)", background: "var(--bg)", color: "var(--text-light)", height: 90, cursor: "pointer" }}>
+                          <ImagePlus size={18} style={{ color: "var(--primary)" }} />
+                          <span style={{ fontSize: 11, fontWeight: 500 }}>Ekle</span>
+                          <span style={{ fontSize: 10, opacity: 0.6 }}>{imagePreviews.length}/{MAX_IMAGES}</span>
+                        </button>
+                      );
+                    }
+                    return (
+                      <div key={idx} style={{ borderRadius: 12, border: "2px dashed var(--border)", background: "var(--bg)", height: 90, opacity: 0.4 }} />
+                    );
+                  })}
                 </div>
                 <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImageSelect} />
               </div>
@@ -257,7 +270,16 @@ export default function FeedbackPage() {
               {error && <p className="text-sm" style={{ color: "#B91C1C" }}>{error}</p>}
 
               <button type="submit" disabled={!rating || !text.trim() || sending}
-                className="btn-primary flex items-center gap-2 disabled:opacity-40">
+                style={{
+                  marginTop: 4, alignSelf: "flex-start",
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "11px 24px", borderRadius: 999,
+                  background: (!rating || !text.trim() || sending) ? "var(--primary-soft)" : "var(--primary)",
+                  color: (!rating || !text.trim() || sending) ? "var(--primary)" : "white",
+                  border: "none", cursor: (!rating || !text.trim() || sending) ? "not-allowed" : "pointer",
+                  fontFamily: "var(--font-dm-sans), sans-serif", fontWeight: 600, fontSize: 15,
+                  opacity: sending ? 0.7 : 1, transition: "all 0.2s",
+                }}>
                 {sending ? <span className="spinner" /> : <Send size={15} />}
                 {sending ? "Gönderiliyor..." : "Yorumu Gönder"}
               </button>
@@ -265,8 +287,8 @@ export default function FeedbackPage() {
           )}
         </div>
 
-        {/* Sağ: Yorum listesi */}
-        <div className="card p-6 flex-1 min-w-0 flex flex-col" style={{ maxHeight: "80vh" }}>
+        {/* Sağ: Yorum listesi — sadece içeride scroll */}
+        <div className="card p-6" style={{ overflow: "hidden", display: "flex", flexDirection: "column", minHeight: 0 }}>
           <h2 className="font-bold mb-4 flex-shrink-0" style={{ color: "var(--text)", fontFamily: "var(--font-dm-sans)" }}>
             Seyahat Yorumları
           </h2>
@@ -307,33 +329,41 @@ export default function FeedbackPage() {
               <p className="text-sm mt-1" style={{ color: "var(--text-light)" }}>İlk yorumu sen yaz!</p>
             </div>
           ) : (
-            <div className="space-y-4 overflow-y-auto pr-1 flex-1">
+            <div style={{ overflowY: "auto", flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 16, paddingRight: 4 }}>
               {reviews.map(r => (
-                <div key={r.id} className="card overflow-hidden">
+                <div key={r.id} style={{
+                  background: "var(--card)", borderRadius: "var(--radius)",
+                  border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)",
+                  overflow: "hidden", flexShrink: 0,
+                }}>
                   <ReviewImages imageUrl={r.image_url} />
-                  <div className="p-5 space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
+                  <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+                    {/* Üst satır: avatar + isim + puan + tarih */}
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <Avatar name={r.full_name} />
                         <div>
-                          <div className="font-semibold text-sm" style={{ color: "var(--text)" }}>{r.full_name}</div>
-                          <div className="flex items-center gap-2 mt-0.5">
+                          <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{r.full_name}</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
                             <StarDisplay value={r.rating} />
                             {r.plan_name && (
-                              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                                style={{ background: "var(--primary-soft)", color: "var(--primary)" }}>
+                              <span style={{
+                                fontSize: 11, padding: "2px 8px", borderRadius: 999, fontWeight: 600,
+                                background: "var(--primary-soft)", color: "var(--primary)",
+                              }}>
                                 {r.plan_name}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-xs flex-shrink-0" style={{ color: "var(--text-light)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--text-light)", flexShrink: 0 }}>
                         <Clock size={11} />
                         {fmtDate(r.created_at)}
                       </div>
                     </div>
-                    <p className="text-sm leading-relaxed" style={{ color: "var(--text)" }}>{r.text}</p>
+                    {/* Yorum metni */}
+                    <p style={{ fontSize: 14, lineHeight: 1.65, color: "#2D3748", margin: 0 }}>{r.text}</p>
                   </div>
                 </div>
               ))}
@@ -342,6 +372,7 @@ export default function FeedbackPage() {
         </div>
 
       </div>
+
     </div>
   );
 }
